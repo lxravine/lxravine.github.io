@@ -54,7 +54,7 @@ $(document).ready(function() {
 		
 		if (into) {
 			var username = into;
-			var index = 0;
+			var index = usernames.indexOf(username);
 			var password = passwords[index];
 			
 			$("input[name=\"vb_login_username\"]").val(username);
