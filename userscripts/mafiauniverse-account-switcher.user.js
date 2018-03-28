@@ -1,23 +1,35 @@
 // ==UserScript==
-// @name         MafiaUniverse Account Switcher
-// @namespace    https://lxravine.github.io/
-// @version      1.0
-// @description  Conveniently swap between multiple accounts. Set usernames and passwords in top of the script.
-// @author       annulus
-// @match        https://www.mafiauniverse.com/*
-// @grant        none
+// @name		MafiaUniverse Account Switcher
+// @namespace	https://lxravine.github.io/
+// @version		1.1
+// @description	Conveniently swap between multiple accounts. Set usernames and password hashes in top of the script.
+// @author		annulus
+// @match		https://www.mafiauniverse.com/*
+// @grant		none
 // ==/UserScript==
 
-// don't run the script if there are less than two entries here. one of the entries should be your main account.
+// don't run the script if there are less than two entries here. one of the entries should be your main account. passwords must be hashed using md5
 var usernames = ["username1", "username2", "username3"];
-var passwords = ["password1", "password2", "password3"];
+var passwordHashes = ["passwordHash1", "passwordHash2", "passwordHash3"];
+
+// redirect with post data https://stackoverflow.com/a/23347763
+$.extend({
+	redirectPost: function(location, args) {
+		var form = '';
+		$.each(args, function(key, value) {
+			value = value.split('"').join('\"')
+			form += '<input type="hidden" name="'+key+'" value="'+value+'">';
+		});
+		$('<form action="' + location + '" method="POST">' + form + '</form>').appendTo($(document.body)).submit();
+	}
+});
 
 $(document).ready(function() {
 	if ($(".isuser").length) { // if user is logged in
 		var loggedInUsername = $(".welcomelink a").text();
 		var loggedInIndex = usernames.indexOf(loggedInUsername);
 		usernames.splice(loggedInIndex, 1);
-		passwords.splice(loggedInIndex, 1);
+		passwordHashes.splice(loggedInIndex, 1);
 		
 		var selectedIndex = 0;
 		var selectedUsername = usernames[selectedIndex];
@@ -59,12 +71,19 @@ $(document).ready(function() {
 		if (into) {
 			var username = into;
 			var index = usernames.indexOf(username);
-			var password = passwords[index];
+			var passwordHash = passwordHashes[index];
 			
-			$("input[name=\"vb_login_username\"]").val(username);
-			$("input[name=\"vb_login_password\"]").val(password);
-			$("input[name=\"cookieuser\"]").click();
-			$("input[type=\"submit\"]").click();
+			$.redirectPost("https://www.mafiauniverse.com/forums/login.php?do=login", {
+				cookieUser: "1",
+				do: "login",
+				s: "",
+				securityToken: "guest",
+				vb_login_md5password: passwordHash,
+				vb_login_md5password_utf: passwordHash,
+				vb_login_password: "",
+				vb_login_password_hint: "Password",
+				vb_login_username: username,
+			});
 		}
 	}
 });
