@@ -30,6 +30,10 @@ $(document).ready(function() {
 		var logoutURL = $(".isuser li:last a").attr("href");
 		logoutButton.attr("onclick", "");
 		logoutButton.attr("href", logoutURL + "&into=" + selectedUsername);
+
+		// fix broken vbulletin notifications menu
+		var factory = new PopupFactory();
+		factory.register(document.getElementById("yui-gen1"));
 		
 		$("body").on("click", "#swap-user", function() {
 			selectedIndex++;
