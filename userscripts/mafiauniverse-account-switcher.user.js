@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name		MafiaUniverse Account Switcher
 // @namespace	https://lxravine.github.io/
-// @version		1.1
+// @version		1.2
 // @description	Conveniently swap between multiple accounts. Set usernames and password hashes in top of the script.
 // @author		annulus
 // @match		https://www.mafiauniverse.com/*
@@ -74,10 +74,10 @@ $(document).ready(function() {
 			var passwordHash = passwordHashes[index];
 			
 			$.redirectPost("https://www.mafiauniverse.com/forums/login.php?do=login", {
-				cookieUser: "1",
+				cookieuser: "1",
 				do: "login",
 				s: "",
-				securityToken: "guest",
+				securityToken: SECURITYTOKEN,
 				vb_login_md5password: passwordHash,
 				vb_login_md5password_utf: passwordHash,
 				vb_login_password: "",
